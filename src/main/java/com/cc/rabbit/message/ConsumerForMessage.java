@@ -1,15 +1,21 @@
-package com.cc.rabbit.quickstart;
+package com.cc.rabbit.message;
 
-import com.rabbitmq.client.*;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.QueueingConsumer;
 
-public class Consumer {
+import java.util.HashMap;
+import java.util.Map;
+
+public class ConsumerForMessage {
 
     public static void main(String[] args) throws Exception{
         //1.创建一个ConnectionFactory
         ConnectionFactory connectionFactory = new ConnectionFactory();
 
         //2.创建一个连接
-        connectionFactory.setHost("192.168.145.150");
+        connectionFactory.setHost("192.168.244.130");
         connectionFactory.setPort(5672);
         connectionFactory.setVirtualHost("/");
         Connection connection = connectionFactory.newConnection();
@@ -32,7 +38,9 @@ public class Consumer {
             QueueingConsumer.Delivery delivery = consumer.nextDelivery();
             String msg = new String(delivery.getBody());
             System.out.println("消费："+msg);
-            
+            Map<String,Object> header =  delivery.getProperties().getHeaders();
+            System.out.println(header.get("111"));
+            System.out.println(header.get("333"));
         }
     }
 }

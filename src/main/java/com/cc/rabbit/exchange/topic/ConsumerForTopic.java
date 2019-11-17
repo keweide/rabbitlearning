@@ -1,15 +1,18 @@
-package com.cc.rabbit.quickstart;
+package com.cc.rabbit.exchange.topic;
 
-import com.rabbitmq.client.*;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.QueueingConsumer;
 
-public class Consumer {
+public class ConsumerForTopic {
 
     public static void main(String[] args) throws Exception{
         //1.创建一个ConnectionFactory
         ConnectionFactory connectionFactory = new ConnectionFactory();
 
         //2.创建一个连接
-        connectionFactory.setHost("192.168.145.150");
+        connectionFactory.setHost("192.168.244.130");
         connectionFactory.setPort(5672);
         connectionFactory.setVirtualHost("/");
         Connection connection = connectionFactory.newConnection();
@@ -18,9 +21,18 @@ public class Consumer {
         Channel channel = connection.createChannel();
         
         //4.声明一个队列
-        String queueName = "test001";
+        String exchangeName = "test_topic_exchange";
+        String exchangeType = "topic";
+//        String routingKey = "user.#";
+        String routingKey = "user.*";
+        String queueName = "test_topic_queue";
+        //声明exchange
+        channel.exchangeDeclare(exchangeName,exchangeType);
+        //声明queue
         channel.queueDeclare(queueName, false, false, false, null);
-        
+        //绑定
+        channel.queueBind(queueName,exchangeName,routingKey);
+
         //5.创建消费者
         QueueingConsumer consumer = new QueueingConsumer(channel);
         
